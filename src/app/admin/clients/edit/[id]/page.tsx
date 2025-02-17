@@ -2,17 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import ClientForm from '@/components/client-form'; // Import reusable ClientForm
-
+import ClientForm from '@/components/client-form'; 
 import { clientSchema } from '@/lib/validations/client';
 import { z } from 'zod';
 import Link from 'next/link';
-// import { Client } from '@/app/admin/clients/page'; // Assuming your Client interface is defined here
+import withAuth from '@/lib/auth';
+
+// Define or import the Client type
+type Client = {
+    ID: string;
+    name: string;
+    email?: string | null;
+    phone?: string | null;
+    address?: string | null;
+    is_active: boolean | null;
+};
 
 const EditClientPage = () => {
     const params = useParams();
-    const clientId = Number(params.id); // Get client ID from URL params
-    const [initialValues, setInitialValues] = useState<Client | null>(null); // State to hold client data for editing
+    const clientId = Number(params.id); 
+    const [initialValues, setInitialValues] = useState<Client | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -21,25 +30,22 @@ const EditClientPage = () => {
 
     useEffect(() => {
         const fetchClient = async () => {
+            const axiosInstance = withAuth();
             setLoading(true);
             setError(null);
             try {
-                const token = localStorage.getItem('admin_jwt_token');
-                const response = await fetch(`${apiBaseURL}/admin/clients/${clientId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
-                if (!response.ok) {
+              
+                const response = await axiosInstance.get(`${apiBaseURL}/admin/clients/${clientId}`);
+                if (!response.statusText.includes('OK')) {
                     if (response.status === 404) {
-                        router.push('/admin/clients'); // Redirect to client list if client not found
+                        router.push('/admin/clients');
                         return;
                     }
-                    const errorData = await response.json();
+                    const errorData = await response.data;
                     throw new Error(errorData.error || `Failed to fetch client: ${response.status} ${response.statusText}`);
                 }
-                const data = await response.json();
-                setInitialValues(data as Client); // Set initial values for the form
+                const data = await response.data;
+                setInitialValues(data as Client); 
             } catch (err: any) {
                 setError(err.message as string);
             } finally {
@@ -50,28 +56,22 @@ const EditClientPage = () => {
     }, [clientId, router, apiBaseURL]);
 
     const handleUpdateClient = async (values: z.infer<typeof clientSchema>) => {
+        const axiosInstance = withAuth();
         setLoading(true);
         setError(null);
         setSuccessMessage(null);
-        const token = localStorage.getItem('admin_jwt_token');
 
         try {
-            const response = await fetch(`${apiBaseURL}/admin/clients/${clientId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify(values),
-            });
+            const response = await axiosInstance.put(`${apiBaseURL}/admin/clients/${clientId}`, values);
 
-            if (!response.ok) {
-                const errorData = await response.json();
+            if (!response.statusText.includes('OK')) {
+                const errorData = await response.data;
                 throw new Error(errorData.error || `Client update failed: ${response.status} ${response.statusText}`);
             }
 
-            const data = await response.json();
-            setSuccessMessage(data.message); // Set success message for ClientForm to handle redirect
+            const data = await response.data;
+            console.log('Client updated:', values);
+            setSuccessMessage(data.message); 
         } catch (err: any) {
             setError(err.message as string);
         } finally {
@@ -80,11 +80,11 @@ const EditClientPage = () => {
     };
 
     const handleCancelEdit = () => {
-        router.push('/admin/clients'); // Redirect to client list on cancel
+        router.push('/admin/clients'); 
     };
 
     if (loading && !initialValues) {
-        return <div>Loading client data...</div>; // Or your loading spinner
+        return <div>Loading client data...</div>; 
     }
 
     if (!initialValues && error) {
@@ -105,14 +105,14 @@ const EditClientPage = () => {
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Edit Client</h1>
             <div className="mb-8 p-6 bg-white shadow rounded">
                 <ClientForm
-                    initialValues={initialValues} // Pass fetched client data as initialValues
+                    initialValues={initialValues} 
                     onSubmit={handleUpdateClient}
                     submitButtonText="Update Client"
                     cancelButtonText="Cancel"
                     loading={loading}
                     error={error}
                     successMessage={successMessage}
-                    onCancel={handleCancelEdit} // Optional cancel handler
+                    onCancel={handleCancelEdit} 
                 />
             </div>
             <div className="mt-4">

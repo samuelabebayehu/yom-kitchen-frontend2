@@ -16,31 +16,29 @@ import { clientSchema } from '@/lib/validations/client'; // Import Zod schema
 
 interface Client {
     name: string;
-    passcode: string;
     email?: string | null;
     phone?: string | null;
     address?: string | null;
-    isActive: boolean;
-    isAdmin: boolean;
+    is_active: boolean| null;
 }
 
 interface ClientFormProps {
-    initialValues?: Client | null; // Optional initial values for edit mode
-    onSubmit: (values: z.infer<typeof clientSchema>) => Promise<void>; // Function to handle form submission
-    onCancel?: () => void; // Optional cancel handler
-    submitButtonText: string; // Text for the submit button
-    cancelButtonText?: string; // Text for the cancel button (optional)
-    loading: boolean; // Loading state
-    error: string | null; // Error message
-    successMessage: string | null; // Success message
+    initialValues?: Client | null; 
+    onSubmit: (values: z.infer<typeof clientSchema>) => Promise<void>; 
+    onCancel?: () => void; 
+    submitButtonText: string; 
+    cancelButtonText?: string; 
+    loading: boolean; 
+    error: string | null; 
+    successMessage: string | null; 
 }
 
 const ClientForm: React.FC<ClientFormProps> = ({
     initialValues,
     onSubmit,
     onCancel,
-    submitButtonText,
-    cancelButtonText = "Cancel", // Default cancel button text
+    submitButtonText = "Create Client",
+    cancelButtonText = "Cancel",
     loading,
     error,
     successMessage,
@@ -49,23 +47,21 @@ const ClientForm: React.FC<ClientFormProps> = ({
         resolver: zodResolver(clientSchema),
         defaultValues: initialValues || { 
             name: "",
-            passcode: "",
             email: "", 
             phone: "", 
             address: "", 
-            isActive: true,
-            isAdmin: false,
+            is_active: true,
         },
-        mode: "onSubmit", // Validate on submit
+        mode: "onSubmit",
+        
     });
 
     const router = useRouter();
 
     const submitHandler = async (values: z.infer<typeof clientSchema>) => {
-        console.log("submitHandler function is being called!"); // <-- ADD THIS LINE
-        await onSubmit(values); // Call the onSubmit prop function
-        if (!error && successMessage) { // If submission was successful and no error
-            router.push('/admin/clients'); // Redirect to client list
+        await onSubmit(values); 
+        if (!error && successMessage) { 
+            router.push('/admin/clients'); 
         }
     };
 
@@ -104,7 +100,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
                         <FormItem>
                             <FormLabel>Email (Optional)</FormLabel>
                             <FormControl>
-                                <Input type="email" placeholder="Email Address" {...field} />
+                                <Input type="email" placeholder="Email Address" {...field} value={field.value ?? ''}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -118,7 +114,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
                         <FormItem>
                             <FormLabel>Phone (Optional)</FormLabel>
                             <FormControl>
-                                <Input type="tel" placeholder="Phone Number" {...field} />
+                                <Input type="tel" placeholder="Phone Number" {...field} value={field.value ?? ''}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -132,7 +128,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
                         <FormItem>
                             <FormLabel>Address (Optional)</FormLabel>
                             <FormControl>
-                                <Input placeholder="Address" {...field} />
+                                <Input placeholder="Address" {...field} value={field.value ?? ''} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -141,7 +137,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 
                 <FormField
                     control={form.control}
-                    name="isActive"
+                    name="is_active"
                     render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-md border px-3 py-2 font-medium shadow-sm transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                             <FormLabel className="text-left">Is Active</FormLabel>
@@ -153,32 +149,17 @@ const ClientForm: React.FC<ClientFormProps> = ({
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="isAdmin"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-md border px-3 py-2 font-medium shadow-sm transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-                            <FormLabel className="text-left">Is Admin</FormLabel>
-                            <FormControl>
-                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-
                 <div className="flex justify-between">
                     <Button type="submit" disabled={loading}>
                         {submitButtonText}
-                        {loading && <span className="ml-2 loading loading-spinner-sm"></span>} {/* Optional loading spinner */}
+                        {loading && <span className="ml-2 loading loading-spinner-sm"></span>} 
                     </Button>
                     {onCancel && (
                         <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
                             {cancelButtonText}
                         </Button>
                     )}
-                    {!onCancel && ( // If no onCancel prop, render a "Cancel" Link to client list
+                    {!onCancel && ( 
                         <Link href="/admin/clients" className={buttonVariants({ variant: "secondary" })} >
                             {cancelButtonText}
                         </Link>

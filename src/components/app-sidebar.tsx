@@ -77,7 +77,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={selectedItem === item.url}
+                    is_active={selectedItem === item.url}
                     onClick={() => handleMenuItemClick(item.url)}
                   >
                     <Link href={item.url}>
