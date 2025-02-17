@@ -23,10 +23,11 @@ import { menuSchema } from "@/lib/validations/menu"; // Import Zod schema
 
 interface Menu {
   name: string;
-  email?: string | null;
-  phone?: string | null;
-  address?: string | null;
-  is_active: boolean | null;
+  desc?: string | null;
+  image?: File | null;
+  price?: number | 0;
+  category?: string | null;
+  available: boolean | true;
 }
 
 interface MenuFormProps {
@@ -44,7 +45,7 @@ const MenuForm: React.FC<MenuFormProps> = ({
   initialValues,
   onSubmit,
   onCancel,
-  submitButtonText = "Create User",
+  submitButtonText = "Create Menu",
   cancelButtonText = "Cancel",
   loading,
   error,
@@ -53,25 +54,22 @@ const MenuForm: React.FC<MenuFormProps> = ({
   const form = useForm<z.infer<typeof menuSchema>>({
     resolver: zodResolver(menuSchema),
     defaultValues: initialValues || {
-      name: "";
-  email?: string | null;
-  phone?: string | null;
-  address?: string | null;
-  is_active: boolean | null;
-
-      username: "",
-      password: "",
-      is_admin: false,
+      name: "",
+      desc: "",
+      image: null,
+      price: 0,
+      category: "",
+      available: true,
     },
     mode: "onSubmit",
   });
 
   const router = useRouter();
 
-  const submitHandler = async (values: z.infer<typeof userSchema>) => {
+  const submitHandler = async (values: z.infer<typeof menuSchema>) => {
     await onSubmit(values);
     if (!error && successMessage) {
-      router.push("/admin/users");
+      router.push("/admin/menus");
     }
   };
 
@@ -98,12 +96,12 @@ const MenuForm: React.FC<MenuFormProps> = ({
 
         <FormField
           control={form.control}
-          name="username"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} />
+                <Input placeholder="Menu Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -111,14 +109,14 @@ const MenuForm: React.FC<MenuFormProps> = ({
         />
         <FormField
           control={form.control}
-          name="password"
+          name="desc"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Password"
+                  placeholder="Description"
                   {...field}
                   value={field.value ?? ""}
                 />
@@ -129,14 +127,72 @@ const MenuForm: React.FC<MenuFormProps> = ({
         />
         <FormField
           control={form.control}
-          name="is_admin"
+          name="price"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Price</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="Price"
+                  {...field}
+                  value={field.value ?? ""}
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Category"
+                  {...field}
+                  value={field.value ?? ""}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="available"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-md border px-3 py-2 font-medium shadow-sm transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-              <FormLabel className="text-left">Is Admin</FormLabel>
+              <FormLabel className="text-left">Available</FormLabel>
               <FormControl>
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-md border px-3 py-2 font-medium shadow-sm transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+              <FormLabel className="text-left">Menu Image</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  placeholder="Browse"
+                  onChange={(e) => field.onChange(e.target.files?.[0] || null)}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
                 />
               </FormControl>
               <FormMessage />
@@ -162,7 +218,7 @@ const MenuForm: React.FC<MenuFormProps> = ({
           )}
           {!onCancel && (
             <Link
-              href="/admin/users"
+              href="/admin/menus"
               className={buttonVariants({ variant: "secondary" })}
             >
               {cancelButtonText}

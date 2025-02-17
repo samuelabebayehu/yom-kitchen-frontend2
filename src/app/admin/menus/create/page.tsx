@@ -1,59 +1,75 @@
 "use client";
 
 import React, { useState } from "react";
-import ClientForm from "@/components/client-form";
 import axios from "axios";
 import withAuth from "@/lib/auth";
+import MenuForm from "@/components/menu-form";
 
-const CreateClientPage = () => {
+const CreateMenuPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  interface ClientValues {
+  interface MenuValues {
     name: string;
-    email?: string | null;
-    phone?: string | null;
-    address?: string | null;
-    is_active: boolean | null;
+    desc?: string | null;
+    image?: File | null;
+    price?: number | 0;
+    category?: string | null;
+    available: boolean;
   }
 
-  const handleCreateClient = async (values: ClientValues) => {
+  const handleCreateMenu = async (values: MenuValues) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
     try {
       const axiosInstance = withAuth();
       console.log("onSubmit in parent component called with values:", values);
+
+      const formData = new FormData();
+      formData.append("name", values.name);
+      if (values.desc) formData.append("desc", values.desc);
+      if (values.image) formData.append("image", values.image);
+      if (values.price) formData.append("price", values.price.toString());
+      if (values.category) formData.append("category", values.category);
+      formData.append("available", values.available.toString());
+
       const response = await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/clients`,
-        values
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/menus`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       if (response.status !== 201 && response.status !== 200) {
-        throw new Error(`Failed to create client. Status: ${response.status}`);
+        throw new Error(`Failed to create menu. Status: ${response.status}`);
       }
-      setSuccessMessage("Client created successfully!");
+      setSuccessMessage("Menu created successfully!");
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         setError(
-          e.response?.data?.message || e.message || "Error creating client."
+          e.response?.data?.message || e.message || "Error creating menu."
         );
-        console.error("Axios error creating client:", e);
+        console.error("Axios error creating menu:", e);
       } else if (e instanceof Error) {
-        setError(e.message || "Error creating client.");
+        setError(e.message || "Error creating menu.");
       } else {
-        setError("Error creating client.");
+        setError("Error creating menu.");
       }
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div>
-      <h1>Create New Client</h1>
-      <ClientForm
-        onSubmit={handleCreateClient}
-        submitButtonText="Create Client"
+      <h1>Create New Menu</h1>
+      <MenuForm
+        onSubmit={handleCreateMenu}
+        submitButtonText="Create Menu"
         loading={loading}
         error={error}
         successMessage={successMessage}
@@ -62,4 +78,4 @@ const CreateClientPage = () => {
   );
 };
 
-export default CreateClientPage;
+export default CreateMenuPage;
