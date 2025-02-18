@@ -12,18 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button,buttonVariants } from "@/components/ui/button";
 
-import { clientSchema } from '@/lib/validations/client'; // Import Zod schema
+import {clientSchema} from '@/lib/validations/client'; 
 
-interface Client {
-    name: string;
-    email?: string | null;
-    phone?: string | null;
-    address?: string | null;
-    is_active: boolean| null;
-}
+
 
 interface ClientFormProps {
-    initialValues?: Client | null; 
+    initialValues?: z.infer<typeof clientSchema>| null; 
     onSubmit: (values: z.infer<typeof clientSchema>) => Promise<void>; 
     onCancel?: () => void; 
     submitButtonText: string; 
@@ -52,8 +46,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
             address: "", 
             is_active: true,
         },
-        mode: "onSubmit",
-        
+        mode: "onSubmit",  
     });
 
     const router = useRouter();

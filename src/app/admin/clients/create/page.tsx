@@ -4,27 +4,23 @@ import React, { useState } from "react";
 import ClientForm from "@/components/client-form";
 import axios from "axios";
 import withAuth from "@/lib/auth";
+import {clientSchema} from "@/lib/validations/client";
+import {z} from "zod"
 
 const CreateClientPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  interface ClientValues {
-    name: string;
-    email?: string | null;
-    phone?: string | null;
-    address?: string | null;
-    is_active: boolean | null;
-  }
 
-  const handleCreateClient = async (values: ClientValues) => {
+
+  const handleCreateClient = async (values: z.infer<typeof clientSchema>) => {
+    console.log("handleCreateClient in parent called with:", values);
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
     try {
       const axiosInstance = withAuth();
-      console.log("onSubmit in parent component called with values:", values);
       const response = await axiosInstance.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/clients`,
         values

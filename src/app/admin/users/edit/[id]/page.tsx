@@ -8,16 +8,12 @@ import Link from "next/link";
 import withAuth from "@/lib/auth";
 import { userSchema } from "@/lib/validations/user";
 
-type User = {
-  username: string;
-  password: string;
-  is_admin: boolean | false;
-};
+
 
 const EditUserPage = () => {
   const params = useParams();
   const userId = Number(params.id);
-  const [initialValues, setInitialValues] = useState<User | null>(null);
+  const [initialValues, setInitialValues] = useState<z.infer<typeof userSchema> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -45,7 +41,7 @@ const EditUserPage = () => {
           );
         }
         const data = await response.data;
-        setInitialValues(data as User);
+        setInitialValues(data as z.infer<typeof userSchema>);
       } catch (err: any) {
         setError(err.message as string);
       } finally {

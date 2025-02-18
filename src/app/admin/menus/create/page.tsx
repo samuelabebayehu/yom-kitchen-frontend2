@@ -4,22 +4,16 @@ import React, { useState } from "react";
 import axios from "axios";
 import withAuth from "@/lib/auth";
 import MenuForm from "@/components/menu-form";
+import { z } from "zod";
+import { menuSchema } from "@/lib/validations/menu";
 
 const CreateMenuPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  interface MenuValues {
-    name: string;
-    desc?: string | null;
-    image?: File | null;
-    price?: number | 0;
-    category?: string | null;
-    available: boolean | true;
-  }
 
-  const handleCreateMenu = async (values: MenuValues) => {
+  const handleCreateMenu = async (values: z.infer<typeof menuSchema>) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);

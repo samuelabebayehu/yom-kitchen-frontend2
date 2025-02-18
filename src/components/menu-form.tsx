@@ -21,17 +21,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 
 import { menuSchema } from "@/lib/validations/menu"; // Import Zod schema
 
-interface Menu {
-  name: string;
-  desc?: string | null;
-  image?: File | null;
-  price: number | 0;
-  category?: string | null;
-  available: boolean | true;
-}
 
 interface MenuFormProps {
-  initialValues?: Menu | null;
+  initialValues?: z.infer<typeof menuSchema> | null;
   onSubmit: (values: z.infer<typeof menuSchema>) => Promise<void>;
   onCancel?: () => void;
   submitButtonText: string;

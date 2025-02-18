@@ -4,9 +4,7 @@ const imageFileSchema = z.instanceof(File).refine(file => file.type.startsWith("
     message: "Must be an image file",
 });
 
-
-export const menuSchema = z.object({
-    id: z.number().int(),
+const menuSchema = z.object({
     name: z.string().min(2, {
         message: "Name must be at least 2 characters.",
     }),
@@ -18,4 +16,19 @@ export const menuSchema = z.object({
 
 });
 
-export default menuSchema;
+const menuResponseSchema = z.object({
+    ID: z.number().int(),
+    name: z.string().min(2, {
+        message: "Name must be at least 2 characters.",
+    }),
+    desc: z.string().optional().nullable(),
+    image_url: z.string().optional().nullable(),
+    price: z.number().positive(),
+    category: z.string().optional().nullable(),
+    available: z.boolean().default(true),
+
+});
+
+
+
+export {menuSchema,menuResponseSchema};

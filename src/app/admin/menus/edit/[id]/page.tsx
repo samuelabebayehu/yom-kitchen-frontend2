@@ -3,26 +3,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import MenuForm from "@/components/menu-form";
-import { menuSchema } from "@/lib/validations/menu";
+import { menuResponseSchema, menuSchema } from "@/lib/validations/menu";
 import { z } from "zod";
 import Link from "next/link";
 import withAuth from "@/lib/auth";
 import axios from "axios";
 
-type Menu = {
-  ID: string;
-  name: string;
-  desc: string | null;
-  image_url?: string | null;
-  price: number | 0;
-  category?: string | null;
-  available: boolean | true;
-};
 
 const EditMenuPage = () => {
   const params = useParams();
   const menuId = params ? Number(params.id) : null;
-  const [initialValues, setInitialValues] = useState<Menu | null>(null);
+  const [initialValues, setInitialValues] = useState<z.infer<typeof menuResponseSchema> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -50,7 +41,7 @@ const EditMenuPage = () => {
           );
         }
         const data = await response.data;
-        setInitialValues(data as Menu);
+        setInitialValues(data as z.infer<typeof menuResponseSchema>);
       } catch (err: any) {
         setError(err.message as string);
       } finally {

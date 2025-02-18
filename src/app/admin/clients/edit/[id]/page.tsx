@@ -3,25 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ClientForm from '@/components/client-form'; 
-import { clientSchema } from '@/lib/validations/client';
+import {clientSchema}  from '@/lib/validations/client';
 import { z } from 'zod';
 import Link from 'next/link';
 import withAuth from '@/lib/auth';
 
-// Define or import the Client type
-type Client = {
-    ID: string;
-    name: string;
-    email?: string | null;
-    phone?: string | null;
-    address?: string | null;
-    is_active: boolean | null;
-};
+
 
 const EditClientPage = () => {
     const params = useParams();
     const clientId = Number(params.id); 
-    const [initialValues, setInitialValues] = useState<Client | null>(null);
+    const [initialValues, setInitialValues] = useState<z.infer<typeof clientSchema> | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);

@@ -15,15 +15,13 @@ import { buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 import withAuth from "@/lib/auth";
 import { PlusCircleIcon } from "lucide-react";
+import { userResponseSchema } from "@/lib/validations/user";
+import { z } from "zod";
 
-interface User {
-  id: string;
-  username: string;
-  is_admin: string;
-}
+
 
 const UserList = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<z.infer<typeof userResponseSchema>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +50,7 @@ const UserList = () => {
     fetchUsers();
   }, []);
 
-  const handleDeleteUser = async (userID: string) => {
+  const handleDeleteUser = async (userID: number) => {
     if (!window.confirm("Are you sure you want to delete this user?")) {
       return;
     }

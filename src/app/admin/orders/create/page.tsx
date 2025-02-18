@@ -4,25 +4,16 @@ import React, { useState } from "react";
 import OrderForm from "@/components/order-form";
 import axios from "axios";
 import withAuth from "@/lib/auth";
-import clientSchema from "@/lib/validations/client";
-import { orderItemSchema } from "@/lib/validations/order";
+import {orderSchema} from "@/lib/validations/order";
+import { z } from "zod";
 
 const CreateOrderPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  interface OrderValues {
-      client_id: number | 0,
-      client: typeof clientSchema, // Assuming Client schema is defined elsewhere
-      order_date:Date,
-      order_items: typeof orderItemSchema, // Assuming OrderItem schema is defined elsewhere
-      total_amount: number,
-      status: string | 'Pending',
-      notes: string | null,
-  }
 
-  const handleCreateOrder = async (values: OrderValues) => {
+  const handleCreateOrder = async (values: z.infer<typeof orderSchema>) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);

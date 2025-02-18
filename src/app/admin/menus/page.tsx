@@ -17,19 +17,12 @@ import withAuth from "@/lib/auth";
 import { PlusCircleIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
+import { z } from "zod";
+import {menuResponseSchema} from "@/lib/validations/menu"
 
-interface Menu {
-  ID: string;
-  name: string;
-  desc: string | null;
-  image_url?: string | null;
-  price: number | 0;
-  category?: string | null;
-  available: boolean | true;
-}
 
 const MenuList = () => {
-  const [menus, setMenus] = useState<Menu[]>([]);
+  const [menus, setMenus] = useState<z.infer<typeof menuResponseSchema>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +38,6 @@ const MenuList = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.data;
-      console.log("data", data);
       setMenus(data);
     } catch (e: any) {
       setError(e.message || "Could not fetch menus.");
@@ -58,7 +50,7 @@ const MenuList = () => {
     fetchMenus();
   }, []);
 
-  const handleDeleteMenu = async (menuId: string) => {
+  const handleDeleteMenu = async (menuId: number) => {
     if (!window.confirm("Are you sure you want to delete this menu?")) {
       return;
     }
@@ -85,17 +77,15 @@ const MenuList = () => {
   };
 
   const handleToggleAvailability = async (
-    menuId: string,
+    menuId: number,
     currentStatus: boolean
   ) => {
     const axiosInstance = withAuth();
     setLoading(true);
     setError(null);
-    console.log("Update menu status " ,currentStatus)
     try {
       const response = await axiosInstance.patch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/menus/${menuId}`,
-        { available: !currentStatus }
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/menus/${menuId}`
       );
       if (!response.statusText.includes("OK")) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -172,7 +162,6 @@ const MenuList = () => {
                   <Switch
                     checked={menu.available}
                     onCheckedChange={() => {
-                      console.log(`Toggling availability for menu ID: ${menu.ID}`);
                       handleToggleAvailability(menu.ID, menu.available);
                     }}
                     disabled={loading}

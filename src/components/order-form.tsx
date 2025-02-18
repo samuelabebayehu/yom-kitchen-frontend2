@@ -27,35 +27,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { clientResponseSchema } from "@/lib/validations/client";
+import { menuResponseSchema, menuSchema } from "@/lib/validations/menu";
 
-interface Order {
-  order_id: number;
-  client_id: number;
-  client?: {
-    id?: number;
-    name?: string;
-    email?: string;
-    phone?: string | null;
-    address?: string | null;
-  };
-  order_date: string;
-  order_items?: OrderItem[];
-  total_amount: number;
-  status: string | "Pending";
-  notes: string | undefined;
-}
-
-interface OrderItem {
-  order_id?: number;
-  menu_item_id: number;
-  item_name: string;
-  item_price: number;
-  quantity: number | 1;
-  subtotal: number | 0;
-}
 
 interface OrderFormProps {
-  initialValues?: Order | null;
+  initialValues?: z.infer<typeof orderSchema> | null;
   onSubmit: (values: z.infer<typeof orderSchema>) => Promise<void>;
   onCancel?: () => void;
   submitButtonText: string;
@@ -63,25 +40,6 @@ interface OrderFormProps {
   loading: boolean;
   error: string | null;
   successMessage: string | null;
-}
-
-interface Client {
-  ID: string;
-  name: string;
-  email?: string | null;
-  phone?: string | null;
-  address?: string | null;
-  is_active: boolean;
-}
-
-interface Menu {
-  ID: string;
-  name: string;
-  desc: string | null;
-  image_url?: string | null;
-  price: number | 0;
-  category?: string | null;
-  available: boolean | true;
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({
@@ -93,10 +51,10 @@ const OrderForm: React.FC<OrderFormProps> = ({
   error,
   successMessage,
 }) => {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [menuItems, setMenuItems] = useState<Menu[]>([]);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(clients.length>0?clients[0]:null);
-  const [clientId, setClientId] = useState<number | null>(clients.length>0?parseInt(clients[0].ID):null);
+  const [clients, setClients] = useState<z.infer<typeof clientResponseSchema>[]>([]);
+  const [menuItems, setMenuItems] = useState<z.infer<typeof menuResponseSchema>[]>([]);
+  const [selectedClient, setSelectedClient] = useState<z.infer<typeof clientResponseSchema> | null>(clients.length>0?clients[0]:null);
+  const [clientId, setClientId] = useState<number | null>(clients.length>0?clients[0].ID:null);
 
 
   useEffect(() => {
@@ -132,7 +90,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
     mode: "onSubmit",
   });
 
-  const { control, handleSubmit, setValue, getValues } = form;
+  const { control, handleSubmit, setValue, getValues,formState: { errors }  } = form;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "order_items",
@@ -144,7 +102,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
 
   useEffect(() => {
     if (selectedClient) {
-      setClientId(parseInt(selectedClient.ID));
+      setClientId(selectedClient.ID);
     } else {
       setClientId(null);
     }
@@ -160,16 +118,14 @@ const OrderForm: React.FC<OrderFormProps> = ({
     }
   };
   const handleClientChange = (value: string) => {
-    console.log(value);
-    const selected = clients.find((client) => client.ID === value);
-    console.log(selected);
+    const selected = clients.find((client) => client.ID === parseInt(value));
     setSelectedClient(selected || null);
   };
 
-  const handleAddMenuItem = (menuItem: Menu, quantity = 0) => {
-    const menuItemIdToAdd = parseInt(menuItem.ID);
+  const handleAddMenuItem = (menuItem: z.infer<typeof menuResponseSchema>, quantity = 0) => {
+    const menuItemIdToAdd = menuItem.ID;
     const existingItemIndex = fields.findIndex(
-      (field) => parseInt(field.menu_item_id) === menuItemIdToAdd
+      (field) => field.menu_item_id === menuItemIdToAdd
     );
 
     if (existingItemIndex > -1) {
@@ -224,14 +180,14 @@ const OrderForm: React.FC<OrderFormProps> = ({
               <FormControl>
                 <Select
                   onValueChange={handleClientChange}
-                  value={clientId?.toString() || ""} // Make Select controlled
+                  value={clientId?.toString() || ""} 
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={"Select a client"} />
                   </SelectTrigger>
                   <SelectContent>
                     {clients.map((client) => (
-                      <SelectItem key={client.ID} value={client.ID}>
+                      <SelectItem key={client.ID} value={client.ID.toString()}>
                         {client.name}
                       </SelectItem>
                     ))}
@@ -279,7 +235,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
                         onChange={(e) => {
                           const newQuantity = parseInt(e.target.value);
                           const menuItemForUpdate = menuItems.find(
-                            (item) => parseInt(item.ID) === parseInt(fields[index].menu_item_id.toString())
+                            (item) => item.ID === parseInt(fields[index].menu_item_id.toString())
                           );
                           if (menuItemForUpdate && newQuantity > 0) {
                             handleAddMenuItem(menuItemForUpdate,newQuantity); // Call handleAddMenuItem with menuItem and newQuantity

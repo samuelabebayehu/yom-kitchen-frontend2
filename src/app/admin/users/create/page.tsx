@@ -4,19 +4,16 @@ import React, { useState } from "react";
 import axios from "axios";
 import withAuth from "@/lib/auth";
 import UserForm from "@/components/user-form";
+import { z } from "zod";
+import { userSchema } from "@/lib/validations/user";
 
 const CreateUserPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  interface UserValues {
-    username: string;
-    password: string;
-    is_admin: boolean|false;
-  }
 
-  const handleCreateUser = async (values: UserValues) => {
+  const handleCreateUser = async (values: z.infer<typeof userSchema>) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);

@@ -15,19 +15,13 @@ import { buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 import withAuth from "@/lib/auth";
 import { PlusCircleIcon } from "lucide-react";
+import {clientResponseSchema} from "@/lib/validations/client"
+import {z} from "zod"
 
-interface Client {
-  ID: string;
-  name: string;
-  passcode: string;
-  email?: string | null;
-  phone?: string | null;
-  address?: string | null;
-  is_active: boolean;
-}
+
 
 const ClientList = () => {
-  const [clients, setClients] = useState<Client[]>([]);
+  const [clients, setClients] = useState<z.infer<typeof clientResponseSchema>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,7 +50,7 @@ const ClientList = () => {
     fetchClients();
   }, []);
 
-  const handleDeleteClient = async (clientId: string) => {
+  const handleDeleteClient = async (clientId: number) => {
     if (!window.confirm("Are you sure you want to delete this client?")) {
       return;
     }
