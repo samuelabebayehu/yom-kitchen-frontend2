@@ -25,7 +25,7 @@ interface Menu {
   name: string;
   desc?: string | null;
   image?: File | null;
-  price?: number | 0;
+  price: number | 0;
   category?: string | null;
   available: boolean | true;
 }

@@ -16,7 +16,7 @@ const CreateMenuPage = () => {
     image?: File | null;
     price?: number | 0;
     category?: string | null;
-    available: boolean;
+    available: boolean | true;
   }
 
   const handleCreateMenu = async (values: MenuValues) => {

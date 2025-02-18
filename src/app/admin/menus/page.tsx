@@ -23,7 +23,7 @@ interface Menu {
   name: string;
   desc: string | null;
   image_url?: string | null;
-  price?: string | null;
+  price: number | 0;
   category?: string | null;
   available: boolean | true;
 }
@@ -84,10 +84,14 @@ const MenuList = () => {
     }
   };
 
-  const handleToggleAvailability = async (menuId: string, currentStatus: boolean) => {
+  const handleToggleAvailability = async (
+    menuId: string,
+    currentStatus: boolean
+  ) => {
     const axiosInstance = withAuth();
     setLoading(true);
     setError(null);
+    console.log("Update menu status " ,currentStatus)
     try {
       const response = await axiosInstance.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/menus/${menuId}`,
@@ -167,7 +171,10 @@ const MenuList = () => {
                 <TableCell>
                   <Switch
                     checked={menu.available}
-                    onChange={() => handleToggleAvailability(menu.ID, menu.available)}
+                    onCheckedChange={() => {
+                      console.log(`Toggling availability for menu ID: ${menu.ID}`);
+                      handleToggleAvailability(menu.ID, menu.available);
+                    }}
                     disabled={loading}
                   />
                 </TableCell>
