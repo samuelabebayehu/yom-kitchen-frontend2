@@ -34,15 +34,10 @@ const CreateMenuPage = () => {
       if (values.price) formData.append("price", values.price.toString());
       if (values.category) formData.append("category", values.category);
       formData.append("available", values.available.toString());
-
+      console.log(formData)
       const response = await axiosInstance.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/menus`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
       );
       if (response.status !== 201 && response.status !== 200) {
         throw new Error(`Failed to create menu. Status: ${response.status}`);

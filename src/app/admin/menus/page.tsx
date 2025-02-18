@@ -15,6 +15,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 import withAuth from "@/lib/auth";
 import { PlusCircleIcon } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
 
 interface Menu {
   ID: string;
@@ -82,6 +84,31 @@ const MenuList = () => {
     }
   };
 
+  const handleToggleAvailability = async (menuId: string, currentStatus: boolean) => {
+    const axiosInstance = withAuth();
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInstance.patch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/menus/${menuId}`,
+        { available: !currentStatus }
+      );
+      if (!response.statusText.includes("OK")) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const updatedMenus = menus.map((menu) =>
+        menu.ID === menuId ? { ...menu, available: !currentStatus } : menu
+      );
+      setMenus(updatedMenus);
+      toast.success("Menu availability updated successfully!");
+    } catch (e: any) {
+      setError(e.message || "Error updating menu availability.");
+      toast.error(e.message || "Error updating menu availability.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return <p>Loading menus...</p>;
   }
@@ -105,6 +132,7 @@ const MenuList = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Id</TableHead>
+              <TableHead>Avatar</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Price</TableHead>
@@ -118,11 +146,31 @@ const MenuList = () => {
             {menus.map((menu) => (
               <TableRow key={menu.ID}>
                 <TableCell>{menu.ID}</TableCell>
+                <TableHead>
+                  <Avatar>
+                    <AvatarImage
+                      src={
+                        menu.image_url
+                          ? `${process.env.NEXT_PUBLIC_API_BASE_URL}${
+                              menu.image_url.startsWith("/") ? "" : "/"
+                            }${menu.image_url}`
+                          : ""
+                      }
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </TableHead>
                 <TableCell>{menu.name}</TableCell>
                 <TableCell>{menu.desc}</TableCell>
                 <TableCell>{menu.price || "-"}</TableCell>
                 <TableCell>{menu.category || "-"}</TableCell>
-                <TableCell>{menu.available ? "Yes" : "No"}</TableCell>
+                <TableCell>
+                  <Switch
+                    checked={menu.available}
+                    onChange={() => handleToggleAvailability(menu.ID, menu.available)}
+                    disabled={loading}
+                  />
+                </TableCell>
                 <TableCell>
                   <Link
                     href={`/admin/menus/edit/${menu.ID}`}
