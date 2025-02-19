@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useMemo } from "react";
 
 import {
   Form,
@@ -28,8 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { clientResponseSchema } from "@/lib/validations/client";
-import { menuResponseSchema, menuSchema } from "@/lib/validations/menu";
-
+import { menuResponseSchema } from "@/lib/validations/menu";
 
 interface OrderFormProps {
   initialValues?: z.infer<typeof orderSchema> | null;
@@ -51,38 +51,47 @@ const OrderForm: React.FC<OrderFormProps> = ({
   error,
   successMessage,
 }) => {
-  const [clients, setClients] = useState<z.infer<typeof clientResponseSchema>[]>([]);
-  const [menuItems, setMenuItems] = useState<z.infer<typeof menuResponseSchema>[]>([]);
-  const [selectedClient, setSelectedClient] = useState<z.infer<typeof clientResponseSchema> | null>(clients.length>0?clients[0]:null);
-  const [clientId, setClientId] = useState<number | null>(clients.length>0?clients[0].ID:null);
-
+  const [clients, setClients] = useState<
+    z.infer<typeof clientResponseSchema>[]
+  >([]);
+  const [menuItems, setMenuItems] = useState<
+    z.infer<typeof menuResponseSchema>[]
+  >([]);
+  const [clientId, setClientId] = useState<number | null>(
+    clients.length > 0 ? clients[0].ID : null
+  );
+  const [formError, setFormError] = useState<string | null>(null);
+  const [selectedClient, setSelectedClient] = useState<z.infer<
+    typeof clientResponseSchema
+  > | null>(clients[0] || null);
 
   useEffect(() => {
     const axiosInstance = withAuth();
-    const fetchClients = async () => {
-      const response = await axiosInstance.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/clients`
-      );
-      const data = await response.data;
-      setClients(data);
+    const fetchData = async () => {
+      try {
+        const [clientsResponse, menuItemsResponse] = await Promise.all([
+          axiosInstance.get(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/clients`
+          ),
+          axiosInstance.get(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/client/menus`
+          ),
+        ]);
+
+        setClients(clientResponseSchema.array().parse(clientsResponse.data));
+        setMenuItems(menuResponseSchema.array().parse(menuItemsResponse.data));
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
     };
 
-    const fetchMenuItems = async () => {
-      const response = await axiosInstance.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/client/menus`
-      );
-      const data = await response.data;
-      setMenuItems(data);
-    };
-
-    fetchClients();
-    fetchMenuItems();
+    fetchData();
   }, []);
 
   const form = useForm<z.infer<typeof orderSchema>>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      client_id: 0,
+      client_id: undefined,
       order_items: [],
       notes: "",
       total_amount: 0,
@@ -90,15 +99,57 @@ const OrderForm: React.FC<OrderFormProps> = ({
     mode: "onSubmit",
   });
 
-  const { control, handleSubmit, setValue, getValues,formState: { errors }  } = form;
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = form;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "order_items",
   });
   const router = useRouter();
 
+  const orderItems = useWatch({
+    control,
+    name: "order_items",
+  });
+  const total = useMemo(() => {
+    return orderItems.reduce((acc, item) => acc + item.subtotal, 0);
+  }, [orderItems]);
 
+  useEffect(() => {
+    setValue("total_amount", total);
+  }, [total, setValue]);
 
+  useEffect(() => {
+    const total = orderItems.reduce((acc, item) => acc + item.subtotal, 0);
+    setValue("total_amount", total);
+  }, [orderItems, setValue]);
+
+  const submitHandler = async (values: z.infer<typeof orderSchema>) => {
+    console.log("submitted and client id is ", clientId);
+    try {
+      if (!values.client_id) {
+        setFormError("Client ID is required.");
+        return;
+      }
+      await onSubmit(values);
+      if (!error && successMessage) {
+        router.push("/admin/orders");
+      }
+    } catch (err) {
+      setFormError(`An error occurred while submitting the form. ${err}`);
+    }
+  };
+
+  const handleClientChange = (value: number) => {
+    const selected = clients.find((client) => client.ID === value);
+    setSelectedClient(selected || null);
+    setValue("client_id", value); // Ensure client_id is set as a number
+  };
 
   useEffect(() => {
     if (selectedClient) {
@@ -108,30 +159,16 @@ const OrderForm: React.FC<OrderFormProps> = ({
     }
   }, [selectedClient]);
 
-  const submitHandler = async (values: z.infer<typeof orderSchema>) => {
-    if (clientId) {
-      values.client_id = clientId;
-    }
-    await onSubmit(values);
-    if (!error && successMessage) {
-      router.push("/admin/orders");
-    }
-  };
-  const handleClientChange = (value: string) => {
-    const selected = clients.find((client) => client.ID === parseInt(value));
-    setSelectedClient(selected || null);
-  };
-
-  const handleAddMenuItem = (menuItem: z.infer<typeof menuResponseSchema>, quantity = 0) => {
+  const handleAddMenuItem = (menuItem: z.infer<typeof menuResponseSchema>) => {
     const menuItemIdToAdd = menuItem.ID;
     const existingItemIndex = fields.findIndex(
       (field) => field.menu_item_id === menuItemIdToAdd
     );
 
     if (existingItemIndex > -1) {
-      // Menu item already exists, increment quantity
-      const currentQuantity = form.getValues(`order_items.${existingItemIndex}.quantity`) || 0; // Get current quantity, default to 0 if undefined
-      const newQuantity = quantity > 0 ? quantity:currentQuantity + 1;
+      const currentQuantity =
+        form.getValues(`order_items.${existingItemIndex}.quantity`) || 0;
+      const newQuantity = currentQuantity + 1;
 
       setValue(`order_items.${existingItemIndex}.quantity`, newQuantity);
       setValue(
@@ -139,8 +176,8 @@ const OrderForm: React.FC<OrderFormProps> = ({
         menuItem.price * newQuantity
       );
     } else {
-      // Menu item does not exist, append new item
       const newItem = {
+        client_id: clientId,
         menu_item_id: menuItemIdToAdd,
         item_name: menuItem.name,
         item_price: menuItem.price,
@@ -151,15 +188,38 @@ const OrderForm: React.FC<OrderFormProps> = ({
     }
   };
 
+  const handleQuantityChange = (index: number, newQuantity: number) => {
+    const menuItem = menuItems.find(
+      (item) => item.ID === fields[index].menu_item_id
+    );
+    if (menuItem && newQuantity > 0) {
+      setValue(`order_items.${index}.quantity`, newQuantity);
+      setValue(`order_items.${index}.subtotal`, menuItem.price * newQuantity);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(submitHandler, (errors, values) =>
+          console.log(errors, values)
+        )}
+        className="space-y-4"
+      >
         {error && (
           <div
             className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
             role="alert"
           >
             <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+        {formError && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <span className="block sm:inline">{formError}</span>
           </div>
         )}
 
@@ -179,13 +239,17 @@ const OrderForm: React.FC<OrderFormProps> = ({
               <FormLabel>Client</FormLabel>
               <FormControl>
                 <Select
-                  onValueChange={handleClientChange}
-                  value={clientId?.toString() || ""} 
+                  onValueChange={(value) => {
+                    const numericValue = Number(value);
+                    handleClientChange(numericValue);
+                    field.onChange(numericValue);
+                  }}
+                  value={clientId?.toString() || ""}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={"Select a client"} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent {...field}>
                     {clients.map((client) => (
                       <SelectItem key={client.ID} value={client.ID.toString()}>
                         {client.name}
@@ -195,6 +259,11 @@ const OrderForm: React.FC<OrderFormProps> = ({
                 </Select>
               </FormControl>
               <FormMessage />
+              {errors.client_id && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.client_id.message}
+                </p>
+              )}
             </FormItem>
           )}
         />
@@ -232,23 +301,20 @@ const OrderForm: React.FC<OrderFormProps> = ({
                         type="number"
                         min="1"
                         {...field}
-                        onChange={(e) => {
-                          const newQuantity = parseInt(e.target.value);
-                          const menuItemForUpdate = menuItems.find(
-                            (item) => item.ID === parseInt(fields[index].menu_item_id.toString())
-                          );
-                          if (menuItemForUpdate && newQuantity > 0) {
-                            handleAddMenuItem(menuItemForUpdate,newQuantity); // Call handleAddMenuItem with menuItem and newQuantity
-                          } else {
-                          }
-                          setValue(
-                            `order_items.${index}.quantity`,
-                            newQuantity
-                          );
-                        }}
+                        onChange={(e) =>
+                          handleQuantityChange(
+                            index,
+                            parseInt(e.target.value) || 1
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
+                    {errors.order_items?.[index]?.quantity && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.order_items[index].quantity?.message}
+                      </p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -282,7 +348,9 @@ const OrderForm: React.FC<OrderFormProps> = ({
             <Button
               type="button"
               variant="destructive"
-              onClick={() => remove(index)}
+              onClick={() => {
+                remove(index);
+              }}
               className="mt-2"
             >
               Remove
@@ -300,6 +368,11 @@ const OrderForm: React.FC<OrderFormProps> = ({
                 <Input type="text" {...field} />
               </FormControl>
               <FormMessage />
+              {errors.notes && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.notes.message}
+                </p>
+              )}
             </FormItem>
           )}
         />

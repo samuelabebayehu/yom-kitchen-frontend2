@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import withAuth from '@/lib/auth';
 
 interface OrderByStatus {
-  status: string;
-  count: number;
+  Status: string;
+  Count: number;
 }
 
 const DashboardPage: React.FC = () => {
@@ -40,7 +40,7 @@ const DashboardPage: React.FC = () => {
         <div className="p-4 bg-white shadow rounded-lg">
           <h2 className="text-xl font-semibold">Order by status</h2>
           {stats.ordersByStatus?stats.ordersByStatus.map((orderStatus, index) => (
-            <p key={index} className="text-2xl">{orderStatus.status}: {orderStatus.count}</p>
+            <p key={index} className="text-2xl">{orderStatus.Status}: {orderStatus.Count}</p>
           )):0}
         </div>
         <div className="p-4 bg-white shadow rounded-lg">

@@ -28,6 +28,7 @@ export function LoginForm({
         password,
       });
       localStorage.setItem("admin_jwt_token", data.token);
+      localStorage.setItem("username", data.username);
         window.location.href = "/admin";
     } catch (err: any) {
       setError(err.code);

@@ -1,5 +1,6 @@
+'use client'
 import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-
+import { redirect } from "next/navigation";
 
 const withAuth = (
     axiosInstanceConfig?: AxiosInstance | AxiosRequestConfig,
@@ -17,6 +18,16 @@ const withAuth = (
         },
         (error) => {
             return Promise.reject(error); // Pass errors along
+        }
+    );
+
+    axiosInstance.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (error.response.status === 401) {
+                redirect("/login");
+            }
+            return Promise.reject(error);
         }
     );
 

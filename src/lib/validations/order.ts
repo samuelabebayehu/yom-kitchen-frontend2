@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import {clientSchema} from './client';
+import { clientSchema } from './client';
 
 const orderItemSchema = z.object({
   menu_item_id: z.number().int(),
@@ -11,11 +11,21 @@ const orderItemSchema = z.object({
 
 const orderSchema = z.object({
   client_id: z.number().int(),
-  client: clientSchema.optional(), 
   order_items: z.array(orderItemSchema),
   total_amount: z.number().positive(),
   status: z.string().default('Pending'),
   notes: z.string().optional(),
 });
 
-export { orderSchema, orderItemSchema };
+const orderResponseSchema = z.object({
+    ID: z.number().int(),
+    client_id: z.number().int().optional().nullable(),
+    client: z.array(clientSchema),
+    order_date: z.date(),
+    order_items: z.array(orderItemSchema) ,
+    status: z.enum(['Pending', 'Accepted', 'Cancelled','Ready', 'Delivered']),
+    notes: z.string().optional(),
+    total_amount: z.number().int()
+});
+
+export { orderSchema, orderResponseSchema,orderItemSchema };
