@@ -32,7 +32,7 @@ function OrderGroup({ title, orders, onChangeStatus }: OrderGroupProps) {
               <div className="flex items-center flex-1 min-w-0">
                 <div className="flex-shrink-0">
                   <div className="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center text-white font-medium">
-                    {order.client?.name.charAt(0) || "C"}
+                    {order.client?.[0]?.name.charAt(0) || "C"}
                   </div>
                 </div>
                 <div className="ml-4 flex-1 min-w-0">
