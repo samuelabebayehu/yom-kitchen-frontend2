@@ -17,6 +17,20 @@ const orderSchema = z.object({
   notes: z.string().optional(),
 });
 
+const clientOrderSchema = z.object({
+  passcode: z.string(),
+  order_items: z.array(
+    z.object({
+      menu_item_id: z.number(),
+      item_name: z.string(),
+      item_price: z.number(),
+      quantity: z.number().default(1),
+      subtotal: z.number().default(0),
+    })),
+    notes: z.string().optional(),
+});
+
+
 const orderResponseSchema = z.object({
     ID: z.number().int(),
     client_id: z.number().int().optional().nullable(),
@@ -28,4 +42,4 @@ const orderResponseSchema = z.object({
     total_amount: z.number().int()
 });
 
-export { orderSchema, orderResponseSchema,orderItemSchema };
+export { orderSchema,clientOrderSchema, orderResponseSchema,orderItemSchema };

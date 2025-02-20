@@ -22,7 +22,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 // Menu items.
 const items = [

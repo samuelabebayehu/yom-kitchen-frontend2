@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import ClientForm from "@/components/client-form";
+import ClientForm from "@/components/admin/client-form";
 import axios from "axios";
 import withAuth from "@/lib/auth";
 import {clientSchema} from "@/lib/validations/client";

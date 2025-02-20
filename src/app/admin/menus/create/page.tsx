@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import withAuth from "@/lib/auth";
-import MenuForm from "@/components/menu-form";
+import MenuForm from "@/components/admin/menu-form";
 import { z } from "zod";
 import { menuSchema } from "@/lib/validations/menu";
 

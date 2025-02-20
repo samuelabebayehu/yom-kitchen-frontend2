@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import ClientForm from '@/components/client-form'; 
+import ClientForm from '@/components/admin/client-form'; 
 import {clientSchema}  from '@/lib/validations/client';
 import { z } from 'zod';
 import Link from 'next/link';

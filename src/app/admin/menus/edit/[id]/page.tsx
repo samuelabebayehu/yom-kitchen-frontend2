@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import MenuForm from "@/components/menu-form";
+import MenuForm from "@/components/admin/menu-form";
 import { menuResponseSchema, menuSchema } from "@/lib/validations/menu";
 import { z } from "zod";
 import Link from "next/link";

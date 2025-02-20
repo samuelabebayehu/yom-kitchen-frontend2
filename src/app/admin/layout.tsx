@@ -1,7 +1,7 @@
 'use client'
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { BreadcrumbFromUrl } from "@/components/bread-crumb";
+import { AppSidebar } from "@/components/admin/app-sidebar";
+import { BreadcrumbFromUrl } from "@/components/admin/bread-crumb";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import withAuth from "@/lib/auth";

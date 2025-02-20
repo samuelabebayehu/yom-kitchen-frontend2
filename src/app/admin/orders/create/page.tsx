@@ -1,17 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import OrderForm from "@/components/order-form";
+import OrderForm from "@/components/admin/order-form";
 import axios from "axios";
 import withAuth from "@/lib/auth";
-import {orderSchema} from "@/lib/validations/order";
+import { orderSchema } from "@/lib/validations/order";
 import { z } from "zod";
 
 const CreateOrderPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
 
   const handleCreateOrder = async (values: z.infer<typeof orderSchema>) => {
     setLoading(true);

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import UserForm from "@/components/user-form";
+import UserForm from "@/components/admin/user-form";
 import { z } from "zod";
 import Link from "next/link";
 import withAuth from "@/lib/auth";

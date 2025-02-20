@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import withAuth from "@/lib/auth";
 import { orderResponseSchema } from "@/lib/validations/order";
 import { z } from "zod";
-import { OrdersView } from "@/components/order-table";
+import { OrdersView } from "@/components/admin/order-table";
 
 const OrderList = () => {
   const [orders, setOrders] = useState<z.infer<typeof orderResponseSchema>[]>(

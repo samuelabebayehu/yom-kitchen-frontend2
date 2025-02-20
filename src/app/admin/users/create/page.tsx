@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import withAuth from "@/lib/auth";
-import UserForm from "@/components/user-form";
+import UserForm from "@/components/admin/user-form";
 import { z } from "zod";
 import { userSchema } from "@/lib/validations/user";
 
