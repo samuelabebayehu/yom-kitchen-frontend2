@@ -30,7 +30,9 @@ export function LoginForm({
       localStorage.setItem("admin_jwt_token", data.token);
       localStorage.setItem("username", data.username);
         window.location.href = "/admin";
-    } catch (err: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (err: any) {
       setError(err.code);
     }
   };

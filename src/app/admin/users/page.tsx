@@ -37,9 +37,10 @@ const UserList = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.data;
-      console.log("data", data);
       setUsers(data);
-    } catch (e: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Could not fetch users.");
       toast.error(e.message || "Could not fetch users.");
     } finally {
@@ -68,7 +69,9 @@ const UserList = () => {
       setUsers(updatedUsers);
       toast.success("User deleted successfully!");
       fetchUsers();
-    } catch (e: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Error deleting user.");
       toast.error(e.message || "Error deleting user.");
     } finally {

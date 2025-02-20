@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/client/client-header";
 import { Input } from "@/components/ui/input";
@@ -130,7 +130,7 @@ export default function MyOrders() {
         </div>
         <h1 className="text-3xl font-bold mb-6">My Orders</h1>
         {orders.length === 0 ? (
-          <p>You haven't placed any orders yet.</p>
+          <p>You havent placed any orders yet.</p>
         ) : (
           <div className="mb-4">
             <div className="bg-gray-50 px-4 py-3">

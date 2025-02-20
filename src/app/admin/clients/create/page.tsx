@@ -15,7 +15,6 @@ const CreateClientPage = () => {
 
 
   const handleCreateClient = async (values: z.infer<typeof clientSchema>) => {
-    console.log("handleCreateClient in parent called with:", values);
     setLoading(true);
     setError(null);
     setSuccessMessage(null);

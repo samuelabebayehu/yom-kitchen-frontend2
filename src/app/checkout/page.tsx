@@ -60,7 +60,6 @@ export default function Checkout() {
 
   const handleSubmitOrder = () => {
     // Here you would typically send the order and passcode to your backend
-    console.log("Submitting order with passcode:", passcode, " and order ", order);
     const finalOrder = {
       passcode,
       order_items: order,

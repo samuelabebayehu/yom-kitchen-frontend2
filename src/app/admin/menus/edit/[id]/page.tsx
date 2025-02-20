@@ -42,7 +42,9 @@ const EditMenuPage = () => {
         }
         const data = await response.data;
         setInitialValues(data as z.infer<typeof menuResponseSchema>);
-      } catch (err: any) {
+      } 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      catch (err: any) {
         setError(err.message as string);
       } finally {
         setLoading(false);
@@ -57,8 +59,6 @@ const EditMenuPage = () => {
     setSuccessMessage(null);
     try {
       const axiosInstance = withAuth();
-      console.log("onSubmit in parent component called with values:", values);
-
       const formData = new FormData();
       formData.append("name", values.name);
       if (values.desc) formData.append("desc", values.desc);
@@ -66,7 +66,6 @@ const EditMenuPage = () => {
       if (values.price) formData.append("price", values.price.toString());
       if (values.category) formData.append("category", values.category);
       formData.append("available", values.available.toString());
-      console.log(formData)
       const response = await axiosInstance.put(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/menus/${menuId}`,
         formData,

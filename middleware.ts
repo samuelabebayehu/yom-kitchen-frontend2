@@ -12,7 +12,6 @@ export async function middleware(request: NextRequest) {
 
   if (isProtectedRoute) {
     const token = request.cookies.get("admin_jwt_token")?.value;
-    console.log("Token:", token);
 
     if (!token) {
       const loginUrl = new URL("/login", request.url);

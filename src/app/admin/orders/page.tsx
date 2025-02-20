@@ -29,7 +29,9 @@ const OrderList = () => {
       }
       const data = await response.data;
       setOrders(data);
-    } catch (e: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Could not fetch orders.");
       toast.error(e.message || "Could not fetch orders.");
     } finally {
@@ -54,7 +56,9 @@ const OrderList = () => {
       }
       toast.success("Order status updated successfully!");
       fetchOrders();
-    } catch (e: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Error updating order status.");
       toast.error(e.message || "Error updating order status.");
     } finally {

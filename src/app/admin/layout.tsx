@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       try {
         await withAuth().get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/clients`);
       } catch (error) {
-        console.log(error);
+        console.log(error)
         redirect("/login");
       }
     };

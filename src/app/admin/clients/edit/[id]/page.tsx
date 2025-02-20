@@ -37,8 +37,10 @@ const EditClientPage = () => {
                     throw new Error(errorData.error || `Failed to fetch client: ${response.status} ${response.statusText}`);
                 }
                 const data = await response.data;
-                setInitialValues(data as Client); 
-            } catch (err: any) {
+                setInitialValues(data as z.infer<typeof clientSchema>); 
+            } 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            catch (err: any) {
                 setError(err.message as string);
             } finally {
                 setLoading(false);
@@ -62,9 +64,10 @@ const EditClientPage = () => {
             }
 
             const data = await response.data;
-            console.log('Client updated:', values);
             setSuccessMessage(data.message); 
-        } catch (err: any) {
+        } 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        catch (err: any) {
             setError(err.message as string);
         } finally {
             setLoading(false);

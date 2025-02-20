@@ -130,7 +130,6 @@ const OrderForm: React.FC<OrderFormProps> = ({
   }, [orderItems, setValue]);
 
   const submitHandler = async (values: z.infer<typeof orderSchema>) => {
-    console.log("submitted and client id is ", clientId);
     try {
       if (!values.client_id) {
         setFormError("Client ID is required.");
@@ -201,9 +200,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
   return (
     <Form {...form}>
       <form
-        onSubmit={handleSubmit(submitHandler, (errors, values) =>
-          console.log(errors, values)
-        )}
+        onSubmit={handleSubmit(submitHandler)}
         className="space-y-4"
       >
         {error && (

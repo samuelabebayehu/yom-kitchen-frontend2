@@ -74,7 +74,7 @@ function OrderGroup({ title, orders, onChangeStatus }: OrderGroupProps) {
             </div>
             {expandedOrders.includes(order.ID) && (
               <div className="mt-2 pl-14">
-                <h4 className="text-sm font-medium text-gray-900 mb-1">Order Items:</h4>
+                <h4 className="text-sm font-medium text-gray-900 mb-1">Order Items for : {order.client[0].name} : {order.client[0].phone}</h4>
                 {order.order_items.map((item, index) => (
                   <div key={index} className="flex justify-between text-sm">
                     <span className="font-medium" style={{ color: `hsl(${index * 60}, 70%, 45%)` }}>

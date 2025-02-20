@@ -39,7 +39,9 @@ const MenuList = () => {
       }
       const data = await response.data;
       setMenus(data);
-    } catch (e: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Could not fetch menus.");
       toast.error(e.message || "Could not fetch menus.");
     } finally {
@@ -68,7 +70,9 @@ const MenuList = () => {
       setMenus(updatedMenus);
       toast.success("menu deleted successfully!");
       fetchMenus();
-    } catch (e: any) {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Error deleting menu.");
       toast.error(e.message || "Error deleting menu.");
     } finally {
@@ -95,7 +99,9 @@ const MenuList = () => {
       );
       setMenus(updatedMenus);
       toast.success("Menu availability updated successfully!");
-    } catch (e: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Error updating menu availability.");
       toast.error(e.message || "Error updating menu availability.");
     } finally {

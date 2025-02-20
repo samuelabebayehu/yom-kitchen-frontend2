@@ -18,7 +18,6 @@ const CreateOrderPage = () => {
     setSuccessMessage(null);
     try {
       const axiosInstance = withAuth();
-      console.log("onSubmit in parent component called with values:", values);
       const response = await axiosInstance.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/orders`,
         values

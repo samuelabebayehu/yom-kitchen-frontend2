@@ -37,9 +37,10 @@ const ClientList = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.data;
-      console.log("data", data);
       setClients(data);
-    } catch (e: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Could not fetch clients.");
       toast.error(e.message || "Could not fetch clients.");
     } finally {
@@ -68,7 +69,9 @@ const ClientList = () => {
       setClients(updatedClients);
       toast.success("Client deleted successfully!");
       fetchClients();
-    } catch (e: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
       setError(e.message || "Error deleting client.");
       toast.error(e.message || "Error deleting client.");
     } finally {

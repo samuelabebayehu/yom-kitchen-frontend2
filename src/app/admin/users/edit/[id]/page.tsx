@@ -42,7 +42,9 @@ const EditUserPage = () => {
         }
         const data = await response.data;
         setInitialValues(data as z.infer<typeof userSchema>);
-      } catch (err: any) {
+      } 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      catch (err: any) {
         setError(err.message as string);
       } finally {
         setLoading(false);
@@ -72,9 +74,10 @@ const EditUserPage = () => {
       }
 
       const data = await response.data;
-      console.log("User updated:", values);
       setSuccessMessage(data.message);
-    } catch (err: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (err: any) {
       setError(err.message as string);
     } finally {
       setLoading(false);

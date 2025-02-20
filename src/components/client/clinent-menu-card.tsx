@@ -23,7 +23,6 @@ export function MenuCard({
   const [quantity, setQuantity] = useState(0);
 
   const handleAddToOrder = () => {
-    console.log('add order')
     onAddToOrder(item, quantity);
     setQuantity(0);
   };

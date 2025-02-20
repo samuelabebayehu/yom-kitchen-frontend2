@@ -19,7 +19,6 @@ const CreateMenuPage = () => {
     setSuccessMessage(null);
     try {
       const axiosInstance = withAuth();
-      console.log("onSubmit in parent component called with values:", values);
 
       const formData = new FormData();
       formData.append("name", values.name);
@@ -28,7 +27,6 @@ const CreateMenuPage = () => {
       if (values.price) formData.append("price", values.price.toString());
       if (values.category) formData.append("category", values.category);
       formData.append("available", values.available.toString());
-      console.log(formData)
       const response = await axiosInstance.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/menus`,
         formData,
