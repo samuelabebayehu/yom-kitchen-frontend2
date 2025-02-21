@@ -198,7 +198,7 @@ export default function MyOrders() {
                             ${(item.item_price * item.quantity).toFixed(2)}
                           </span>
                         </div>
-                      ))})
+                      ))}
                     </div>
                   
                 </div>
