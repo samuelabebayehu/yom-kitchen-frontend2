@@ -55,6 +55,7 @@ export default function MyOrders() {
       }
 
       const data = await response.data;
+      console.log(data)
       setOrders(data || []); // Expecting 'orders' array in response
       setIsPasscodeValid(true);
       setPasscodeError("");
@@ -145,14 +146,14 @@ export default function MyOrders() {
                     <div className="flex items-center flex-1 min-w-0">
                       <div className="flex-shrink-0">
                         <div className="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center text-white font-medium">
-                          {order.client[0]?.name.charAt(0) || "C"}
+                          {order.client.name.charAt(0) || "C"}
                         </div>
                       </div>
                       <div className="ml-4 flex-1 min-w-0">
                         <div className="flex items-center space-x-2 text-sm">
                           <span className="font-medium">Order #{order.ID}</span>
                           <span className="text-gray-500">
-                            {order.client[0]?.name}
+                            {order.client.name}
                           </span>
                         </div>
                         <p className="text-sm text-gray-500 truncate">

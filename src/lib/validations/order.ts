@@ -34,7 +34,7 @@ const clientOrderSchema = z.object({
 const orderResponseSchema = z.object({
     ID: z.number().int(),
     client_id: z.number().int().optional().nullable(),
-    client: z.array(clientSchema),
+    client: clientSchema,
     order_date: z.date(),
     order_items: z.array(orderItemSchema) ,
     status: z.enum(['Pending', 'Accepted', 'Cancelled','Ready', 'Delivered']),
