@@ -145,7 +145,7 @@ export default function MyOrders() {
                     <div className="flex items-center flex-1 min-w-0">
                       <div className="flex-shrink-0">
                         <div className="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center text-white font-medium">
-                          {order.client?.[0]?.name.charAt(0) || "C"}
+                          {order.client[0]?.name.charAt(0) || "C"}
                         </div>
                       </div>
                       <div className="ml-4 flex-1 min-w-0">
@@ -176,7 +176,9 @@ export default function MyOrders() {
                     <div className="mt-2 pl-14">
                       <h4 className="text-sm font-medium text-gray-900 mb-1">
                         Order Items:
+                        
                       </h4>
+                   
                       {order.order_items.map((item, index) => (
                         <div
                           key={index}
@@ -195,7 +197,7 @@ export default function MyOrders() {
                             ${(item.item_price * item.quantity).toFixed(2)}
                           </span>
                         </div>
-                      ))}
+                      ))})
                     </div>
                   
                 </div>

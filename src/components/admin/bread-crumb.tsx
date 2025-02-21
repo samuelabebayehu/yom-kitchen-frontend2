@@ -13,7 +13,7 @@ import {
 
 export function BreadcrumbFromUrl() {
   const pathname = usePathname()
-  const segments = pathname.split("/").filter((segment) => segment !== "")
+  const segments = pathname?.split("/").filter((segment) => segment !== "")
 
   return (
     <Breadcrumb className="my-4 mx-1">
@@ -24,7 +24,7 @@ export function BreadcrumbFromUrl() {
             <span className="hidden sm:inline">Home</span>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        {segments.map((segment, index) => {
+        {segments?.map((segment, index) => {
           const href = `/${segments.slice(0, index + 1).join("/")}`
           const isLast = index === segments.length - 1
 

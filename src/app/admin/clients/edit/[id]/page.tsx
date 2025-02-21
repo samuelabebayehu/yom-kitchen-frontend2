@@ -12,7 +12,7 @@ import withAuth from '@/lib/auth';
 
 const EditClientPage = () => {
     const params = useParams();
-    const clientId = Number(params.id); 
+    const clientId = Number(params?.id); 
     const [initialValues, setInitialValues] = useState<z.infer<typeof clientSchema> | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);

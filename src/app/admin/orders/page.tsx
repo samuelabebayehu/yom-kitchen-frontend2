@@ -14,7 +14,6 @@ const OrderList = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // const stages = ["Pending", "Accepted", "Cancelled", "Ready", "Delivered"];
 
   const fetchOrders = async () => {
     const axiosInstance = withAuth();

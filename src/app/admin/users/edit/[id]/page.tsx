@@ -12,7 +12,7 @@ import { userSchema } from "@/lib/validations/user";
 
 const EditUserPage = () => {
   const params = useParams();
-  const userId = Number(params.id);
+  const userId = Number(params?.id);
   const [initialValues, setInitialValues] = useState<z.infer<typeof userSchema> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
