@@ -57,9 +57,9 @@ export function MenuCard({
       </CardContent>
       <CardFooter className="flex justify-between items-center p-4">
         <div className="flex items-center">
-          <Button onClick={decrementQuantity}>-</Button>
+          <Button onClick={decrementQuantity} variant="outline">-</Button>
           <span className="mx-2">{quantity}</span>
-          <Button onClick={incrementQuantity}>+</Button>
+          <Button onClick={incrementQuantity} variant="outline">+</Button>
         </div>
         <Button onClick={handleAddToOrder}>Add to Order</Button>
       </CardFooter>
