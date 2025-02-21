@@ -18,7 +18,10 @@ export function MenuCard({
   onAddToOrder,
 }: {
   item: z.infer<typeof menuResponseSchema>;
-  onAddToOrder: (item: z.infer<typeof menuResponseSchema>, quantity: number) => void;
+  onAddToOrder: (
+    item: z.infer<typeof menuResponseSchema>,
+    quantity: number
+  ) => void;
 }) {
   const [quantity, setQuantity] = useState(0);
 
@@ -26,6 +29,9 @@ export function MenuCard({
     onAddToOrder(item, quantity);
     setQuantity(0);
   };
+
+  const incrementQuantity = () => setQuantity(quantity + 1);
+  const decrementQuantity = () => setQuantity(quantity > 0 ? quantity - 1 : 0);
 
   return (
     <Card className="overflow-hidden">
@@ -51,13 +57,11 @@ export function MenuCard({
         <p className="font-bold">${item.price.toFixed(2)}</p>
       </CardContent>
       <CardFooter className="flex justify-between items-center p-4">
-        <Input
-          type="number"
-          min="0"
-          value={quantity}
-          onChange={(e) => setQuantity(Number.parseInt(e.target.value) || 0)}
-          className="w-20"
-        />
+        <div className="flex items-center">
+          <Button onClick={decrementQuantity}>-</Button>
+          <span className="mx-2">{quantity}</span>
+          <Button onClick={incrementQuantity}>+</Button>
+        </div>
         <Button onClick={handleAddToOrder}>Add to Order</Button>
       </CardFooter>
     </Card>
