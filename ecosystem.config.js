@@ -5,7 +5,7 @@ module.exports = {
 
   deploy : {
     production : {
-      user : 'ubuntu',
+      user : 'root',
       host : 'appeyetatechmobile.com',
       ref  : 'origin/main',
       repo : 'github.com/samuelabebayehu/yom-kitchen-frontend2.git',
