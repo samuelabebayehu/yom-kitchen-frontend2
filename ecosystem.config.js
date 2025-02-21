@@ -3,6 +3,7 @@ module.exports = {
     name:"yom-kitchen",
     script: 'npm start',
     env: {
+      NODE_ENV: "production", 
       "NEXT_PUBLIC_API_BASE_URL": "http://localhost:8080"
   }
   }],
