@@ -29,8 +29,8 @@ function OrderGroup({ title, orders, onChangeStatus }: OrderGroupProps) {
       <div className="divide-y divide-gray-100">
         {orders.map((order) => (
           <div key={order.ID} className="px-4 py-3 hover:bg-gray-50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center flex-1 min-w-0">
+            <div className="flex flex-col md:flex-row md:items-center items-start justify-between gap-4">
+              <div className="flex  items-center flex-1 min-w-0">
                 <div className="flex-shrink-0">
                   <div className="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center text-white font-medium">
                     {order.client.name.charAt(0) || "C"}
@@ -44,11 +44,9 @@ function OrderGroup({ title, orders, onChangeStatus }: OrderGroupProps) {
                   <p className="text-sm text-gray-500 truncate">{order.notes || "No notes"}</p>
                 </div>
               </div>
-              <div className="flex items-center ml-4">
-                <div className="text-right mr-4">
+              <div className="flex flex-col mt-2 pl-14 text-left md:text-right">
                   <p className="text-sm font-medium text-gray-900">${order.total_amount.toFixed(2)}</p>
                   <p className="text-sm text-gray-500">{new Date(order.order_date).toLocaleString()}</p>
-                </div>
                 <Select
                   value={order.status}
                   onValueChange={(value) => onChangeStatus(order.ID, value as z.infer<typeof orderResponseSchema>["status"])}
@@ -64,7 +62,10 @@ function OrderGroup({ title, orders, onChangeStatus }: OrderGroupProps) {
                     <SelectItem value="Delivered">Delivered</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="ghost" size="sm" className="ml-2" onClick={() => toggleOrderExpansion(order.ID)}>
+            
+              </div>
+              <div>
+              <Button variant="ghost" size="sm" className="ml-2" onClick={() => toggleOrderExpansion(order.ID)}>
                   {expandedOrders.includes(order.ID) ? (
                     <ChevronUp className="h-4 w-4" />
                   ) : (
@@ -75,7 +76,7 @@ function OrderGroup({ title, orders, onChangeStatus }: OrderGroupProps) {
             </div>
             {expandedOrders.includes(order.ID) && (
               <div className="mt-2 pl-14">
-                <h4 className="text-sm font-medium text-gray-900 mb-1">Order Items for : {order.client.name} : {order.client.phone}</h4>
+                <h4 className="text-sm font-medium text-gray-900 mb-1">Order Items for : {order.client.phone}</h4>
                 {order.order_items.map((item, index) => (
                   <div key={index} className="flex justify-between text-sm">
                     <span className="font-medium" style={{ color: `hsl(${index * 60}, 70%, 45%)` }}>

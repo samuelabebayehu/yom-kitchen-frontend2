@@ -55,7 +55,6 @@ export default function MyOrders() {
       }
 
       const data = await response.data;
-      console.log(data)
       setOrders(data || []); // Expecting 'orders' array in response
       setIsPasscodeValid(true);
       setPasscodeError("");
@@ -142,7 +141,7 @@ export default function MyOrders() {
             <div className="divide-y divide-gray-100">
               {orders.map((order) => (
                 <div key={order.ID} className="px-4 py-3 hover:bg-gray-50">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col md:flex-row md:items-center items-start justify-between gap-4">
                     <div className="flex items-center flex-1 min-w-0">
                       <div className="flex-shrink-0">
                         <div className="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center text-white font-medium">
@@ -161,16 +160,17 @@ export default function MyOrders() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center ml-4">
-                      <div className="text-right mr-4">
+                    <div className="flex flex-col mt-2 pl-14 text-left md:text-right">
+                      
                         <p className="text-sm font-medium text-gray-900">
                           ${order.total_amount.toFixed(2)}
                         </p>
                         <p className="text-sm text-gray-500">
                           {new Date(order.order_date).toLocaleString()}
                         </p>
-                      </div>
-                      <p>{order.status}</p>
+                        <p>{order.status}</p>
+                    
+                     
                     </div>
                   </div>
                  
